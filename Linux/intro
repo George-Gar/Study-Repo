@@ -1,0 +1,29 @@
+Command Intro
+
+Ls - Prompts to list the files in your current Directory 
+	-l flag -> shows files in long format
+	-a flag -> include directory entries whose names begin with a dot 
+(.) aka hidden files.
+
+
+History - views a list of the commands that you just ran
+-> alternatively you can use the bang command "!" for example "!8" reruns 
+the eighth command you executed
+
+whoami - displays  who you are logged in as
+
+who - displays who is currently logged in to the system and which terminal 
+they are using
+
+echo - can be used to print/see how our arguments will appear, to create a 
+file or to modify a file. The echo command simply echoes the arguments 
+provided.
+
+cat - displays the contents of a file
+
+more - displays the content of a file one page at a time for easier 
+readability 
+
+
+| - sends the output of the command on the left side as input of the 
+command on the right side.

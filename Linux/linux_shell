@@ -1,0 +1,184 @@
+Linux Shell Overview
+
+- The shell is a user interface, command-line interpreter, and scripting 
+language
+
+- A process is a single instance of a program
+
+- A parent process can spawn child processes
+
+- variables are used to store data
+
+- Shell variables only exist in the process in which they were created
+
+- Environment variables are copied from the parent process to the child 
+process (if they are exported, otherwise they remain in the environment 
+they were created in).
+
+- shell options are used to configure how a shell operates
+
+- When programs start, they may use configuration files to congifure how 
+they operate
+
+- The bash shell has five configuration files: /etc/profile, etc/bashrc, 
+/home/<username>/.bash_profile, /home/<username>/.bashrc, and 
+/home/<username>/.logout
+
+- /etc/profile and /home/<username>/.bash_profile are read when a user 
+logs on or executes a command that requires a logon.
+
+- /etc/bashrc and /home/<username>/.bashrc are read each time a new 
+process is started.
+
+- the source or "dot" (.) command is used to read changes in configuration 
+files into memory
+
+- Redirection permits a user to alter the stdin, stdout, or stderr device 
+or file.
+
+
+The Life of a Process
+
+#A process is a single instance of a program that operates in its own 
+memory space. The OS assigns a unique process ID each time a program is 
+stared and that PID is used to control and track resources assigned to 
+that program.
+
+Parent & Child Process
+
+#Linux provides you with a default shell for passing commands when you 
+logon to the system. This default shell is bash.
+-> when you execute a command such as "ls", a subshell or child process is 
+created to engage with the operating system. This new child process is 
+initially a copy of the parent bash process except it uses a new PID. The 
+exec system call overwrites the new PID with the ls command. Once the ls 
+command completes, it exits and a prompt is displayed to run the next 
+command.
+
+
+Shell variables
+
+#A shell variable only exists in the memory space of the shell in which it 
+was created. This means that when a shell variable is created within a 
+parent process, the variable is available in that process but NOT in any 
+child process.
+
+#syntax for creating shell variables <variable_name>=<value>
+
+#to view the contents of a variable execute the cmd $<variable_name>. The 
+dollar sign is a metacharacter that replaces the name of the variable with 
+the value stored inside the variable.
+-> the "set" cmd displays a list of all the shell variables and functions 
+in the current process.
+
+
+Environment Variables
+
+#Unlike shell variables, environment variables are visible to child 
+processes. To convert a shell variable to an environment variable, you 
+need to assign an export attribute to the variable. When a parent spawns a 
+child process, all variables with this attribute are visible to the child.
+-> to create an environment variable execute "export 
+<variable_name>=<value>"
+-> convert existing shell variables into environment variables by 
+executing "export <variable_name>".
+-> the "unset" cmd deletes the variable and removes it from the 
+environment.
+-> the "env" cmd displays a list of all environment variables in the 
+current shell.
+
+
+Configuring Aliases
+
+#An alias is a command shortcut. 
+-> to create an alias execute "alias <alias_name>='<command>' "
+e.g: The cmd "alias ls='ls --color=auto' " creates an alias to replace the 
+default ls 
+
+
+Redirection
+
+#When a user executes a cmd, user input is received via the standard input 
+device (stdin), which is the keyboard by default.
+All output is sent to the standard output device (stdout) which is the 
+monitor by default. 
+Error messages are sent to the standard error device (stderr) which is 
+also the monitor by default.
+
+stdin = 0
+stdout = 1
+stderr = 2
+
+redirection allows a user to alter the defaults for standard input output 
+and error.
+
+File Descriptors
+
+#This is a reference, or handle, used by the Kernel to access a file. A 
+file descriptor table is created for every process. This table tracks all 
+files opened by the process. A unique index number, or file descriptor 
+number, is assigned to a file when it is opened by a process, as defined 
+below.
+
+-fd0: standard input device
+-fd1: standard output device
+-fd2: standard error device
+-fd255: the bash file descriptor 255 tracks controlling terminal 
+information.
+
+
+Redirect stdin with <
+
+#use the < operator to redirect standard input. For example, the cat cmd 
+is used to list the contents of a file. To input from the /etc/hosts file 
+directly instead of the keyboard execute "cat < /etc/hosts"
+
+#Another form of input redirection is the heredoc, or here document. The 
+heredoc reads each input line from the current source until it reaches the 
+limit word. Otherwise, all the lines read up to that point are used as the 
+standard input for a command.
+
+
+Redirect stdout with > and >>
+
+#use the > operator to redirect standard output to a file. Use the >> 
+operator to append data to a file. These operators will create the file if 
+it doesnt exist. If it does exist, > will overwrite while >> will append. 
+eg: "who > whofile" or "who >> whofile"
+
+
+Redirect stderr with 2> and 2>>
+
+#These control operators are used to choose an alternate standard error 
+file or device. Works the exact same way as redirecting standard output 
+when it comes to appending and overwriting but with errors instead. 
+eg: "ls /etc/roses 2> errorfile" or "ls /etc/roses 2>> errorfile"
+
+NOTE: As 2> redirects standard error messages, 1> redirects standard 
+output messages. Most users use > to redirect stdout, but 1> also does the 
+same ad >.
+
+
+Ignoring error messages with /dev/null
+
+#the /dev/null device is a zero byte character device that is created each 
+time the system boots. Data written here is discarded immediately. To hide 
+errors or discard them redirect them to /dev/null.
+
+eg: ls -R / 2> /dev/null
+
+
+Combining stdout and stderr
+
+#The control operators > and 2> may be combined to send both outputs to 
+the same file or device. 
+
+#The control operator 2>&1 redirects stderr to the 
+same location as stdout.
+	-2> designates altering the data stream for err messages
+	-The & character is a boolean AND
+	-1 is the file descriptor number for the stdout device
+#2>&1 writes the stdout to the same location as the stderr.
+	-1> control operator redirects the stdout
+	-The & is a boolean AND
+	-2 is the file descriptor number for the stderr data stream
